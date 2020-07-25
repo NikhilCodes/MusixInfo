@@ -2,7 +2,7 @@
 
 A flutter application to fetch details for recommended music tracks.
 
- + Used BLoC state management for handling internet connectivity situtations.
+ + Used BLoC state management for handling internet connectivity situations.
  
 ### Screenshots
 
