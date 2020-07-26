@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:musixinfo/constants.dart';
 import 'package:musixinfo/helper_functions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MusicInfoPage extends StatefulWidget {
   MusicInfoPage({Key key, this.trackId}) : super(key: key);
@@ -27,6 +29,8 @@ class _MusicInfoPage extends State<MusicInfoPage> {
 
   var lyrics = "";
   var trackData;
+  bool isBookmarked = false;
+  SharedPreferences _preferences;
 
   @override
   void initState() {
@@ -37,8 +41,12 @@ class _MusicInfoPage extends State<MusicInfoPage> {
 
   loadTrackData() async {
     var _trackData = await getTrackDataByTrackId(widget.trackId);
+    _preferences = await SharedPreferences
+        .getInstance(); // Getting instance once and for all
+    var bookmarks = _preferences.getStringList(bookmarksPrefKey);
     setState(() {
       trackData = _trackData;
+      isBookmarked = bookmarks != null && bookmarks.contains("${widget.trackId}");
     });
   }
 
@@ -120,8 +128,31 @@ class _MusicInfoPage extends State<MusicInfoPage> {
                               style: bodyTextStyle),
                         ],
                       ),
+                SizedBox(height: 24),
               ],
             ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.white,
+        child: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+            color: Colors.black),
+        onPressed: () {
+          var bookmarks = _preferences.getStringList(bookmarksPrefKey);
+
+          if (!isBookmarked) {
+            var bookmarks = _preferences.getStringList(bookmarksPrefKey);
+            if (bookmarks == null) {
+              bookmarks = ["${widget.trackId}"];
+            } else {
+              bookmarks.add("${widget.trackId}");
+            }
+            _preferences.setStringList(bookmarksPrefKey, bookmarks);
+
+            setState(() {
+              isBookmarked = true;
+            });
+          }
+        },
+      ),
     );
   }
 }

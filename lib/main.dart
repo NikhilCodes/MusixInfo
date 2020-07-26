@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:musixinfo/models/music_recommends.dart';
+import 'package:musixinfo/pages/bookmark_page.dart';
 import 'package:musixinfo/special_widgets.dart';
 
 void main() {
@@ -40,6 +41,18 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Color.fromRGBO(40, 40, 40, 1),
         centerTitle: true,
         title: Text(widget.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.collections_bookmark),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => BookmarkPage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       backgroundColor: Colors.black,
       body: StreamBuilder(
