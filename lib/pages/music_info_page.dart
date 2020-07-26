@@ -46,7 +46,8 @@ class _MusicInfoPage extends State<MusicInfoPage> {
     var bookmarks = _preferences.getStringList(bookmarksPrefKey);
     setState(() {
       trackData = _trackData;
-      isBookmarked = bookmarks != null && bookmarks.contains("${widget.trackId}");
+      isBookmarked =
+          bookmarks != null && bookmarks.contains("${widget.trackId}");
     });
   }
 
@@ -136,14 +137,15 @@ class _MusicInfoPage extends State<MusicInfoPage> {
         child: Icon(isBookmarked ? Icons.bookmark : Icons.bookmark_border,
             color: Colors.black),
         onPressed: () {
-          var bookmarks = _preferences.getStringList(bookmarksPrefKey);
-
           if (!isBookmarked) {
             var bookmarks = _preferences.getStringList(bookmarksPrefKey);
             if (bookmarks == null) {
-              bookmarks = ["${widget.trackId}"];
+              bookmarks = [
+                "${widget.trackId}$idNameSeparator${trackData["track_name"]}",
+              ];
             } else {
-              bookmarks.add("${widget.trackId}");
+              bookmarks.add(
+                  "${widget.trackId}$idNameSeparator${trackData["track_name"]}");
             }
             _preferences.setStringList(bookmarksPrefKey, bookmarks);
 

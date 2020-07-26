@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:musixinfo/constants.dart';
-import 'package:musixinfo/helper_functions.dart';
 import 'package:musixinfo/pages/music_info_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -12,12 +11,12 @@ class BookmarkPage extends StatefulWidget {
 }
 
 class _BookmarkPageState extends State<BookmarkPage> {
-  List idBookmarkList;
+  List idNameBookmarkList;
 
   loadSharedPref() async {
     SharedPreferences _preferences = await SharedPreferences.getInstance();
     setState(() {
-      idBookmarkList = _preferences.getStringList(bookmarksPrefKey);
+      idNameBookmarkList = _preferences.getStringList(bookmarksPrefKey);
     });
   }
 
@@ -37,42 +36,30 @@ class _BookmarkPageState extends State<BookmarkPage> {
       backgroundColor: Colors.black,
       body: ListView.separated(
         itemBuilder: (context, index) {
-          return FutureBuilder(
-            future: getTrackDataByTrackId(idBookmarkList[index]),
-            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if (!snapshot.hasData) {
-                return Center(
-                  child: Container(
-                    height: 20,
-                    width: 20,
-                    padding: EdgeInsets.all(5),
-                    child: CircularProgressIndicator(),
+          final idNameList = idNameBookmarkList[index].split(idNameSeparator);
+          final id = idNameList[0];
+          final trackName = idNameList[1];
+          return ListTile(
+            title: Text(
+              trackName,
+              style: TextStyle(color: Colors.white),
+            ),
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => MusicInfoPage(
+                    trackId: id,
+                    key: ValueKey(id),
                   ),
-                );
-              }
-              return ListTile(
-                title: Text(
-                  snapshot.data["track_name"],
-                  style: TextStyle(color: Colors.white),
                 ),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => MusicInfoPage(
-                        trackId: idBookmarkList[index],
-                        key: ValueKey(idBookmarkList[index]),
-                      ),
-                    ),
-                  );
-                },
               );
             },
           );
         },
         separatorBuilder: (context, index) => Divider(
-          color: idBookmarkList != null ? Colors.grey : Colors.transparent,
+          color: idNameBookmarkList != null ? Colors.grey : Colors.transparent,
         ),
-        itemCount: idBookmarkList != null ? idBookmarkList.length : 0,
+        itemCount: idNameBookmarkList != null ? idNameBookmarkList.length : 0,
       ),
     );
   }
